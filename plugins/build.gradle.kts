@@ -163,6 +163,19 @@ gradlePlugin {
     }
 }
 
+publishing {
+    repositories {
+        maven {
+            name = "reposiliteSnapshots"
+            url = uri("https://reposilite.flipp.dev/snapshots")
+            credentials {
+                username = System.getenv("REPOSILITE_USERNAME")
+                password = System.getenv("REPOSILITE_PASSWORD")
+            }
+        }
+    }
+}
+
 ext["signing.keyId"] = System.getenv("GPG_SIGNING_KEY")
 ext["signing.password"] = System.getenv("GPG_PASSWORD")
 ext["signing.secretKeyRingFile"] = "../sec.gpg"

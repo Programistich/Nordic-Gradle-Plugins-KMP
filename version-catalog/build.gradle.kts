@@ -48,6 +48,16 @@ catalog {
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "reposiliteSnapshots"
+            url = uri("https://reposilite.flipp.dev/snapshots")
+            credentials {
+                username = System.getenv("REPOSILITE_USERNAME")
+                password = System.getenv("REPOSILITE_PASSWORD")
+            }
+        }
+    }
     publications {
         create<MavenPublication>("libs") {
             from(components["versionCatalog"])
