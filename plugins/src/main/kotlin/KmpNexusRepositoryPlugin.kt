@@ -41,11 +41,9 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
-import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jetbrains.dokka.gradle.engine.plugins.DokkaHtmlPluginParameters
 import java.util.Calendar
@@ -57,7 +55,6 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("org.jetbrains.kotlin.multiplatform")
                 apply("maven-publish")
-                apply("signing")
                 apply("org.jetbrains.dokka")
             }
 
@@ -65,7 +62,6 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
             group = "no.nordicsemi.kotlin"
 
             val nexusPluginExt = extensions.create("nordicNexusPublishing", NexusRepositoryPluginExt::class.java)
-            val signing = extensions.getByType<SigningExtension>()
             val dokka = try {
                 extensions.getByType<DokkaExtension>()
             } catch (_: UnknownDomainObjectException) {
@@ -75,11 +71,6 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
                 )
                 null
             }
-
-            // The signing configuration will be user by signing plugin.
-            extra.set("signing.keyId", System.getenv("GPG_SIGNING_KEY"))
-            extra.set("signing.password", System.getenv("GPG_PASSWORD"))
-            extra.set("signing.secretKeyRingFile", "${project.rootDir.path}/sec.gpg")
 
             // Instead, configure Dokka to generate HTML docs for the module.
             dokka?.apply {
@@ -126,11 +117,19 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
                 publishing {
                     repositories {
                         maven {
+<<<<<<< Updated upstream
                             name = "ossrh-staging-api"
                             setUrl("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
                             credentials {
                                 username = System.getenv("OSSR_USERNAME")
                                 password = System.getenv("OSSR_PASSWORD")
+=======
+                            name = "reposiliteSnapshots"
+                            setUrl("https://reposilite.flipp.dev/snapshots")
+                            credentials {
+                                username = System.getenv("REPOSILITE_USERNAME")
+                                password = System.getenv("REPOSILITE_PASSWORD")
+>>>>>>> Stashed changes
                             }
                         }
                         maven {
@@ -158,8 +157,6 @@ class KmpNexusRepositoryPlugin : Plugin<Project> {
                                 artifact(tasks.named("dokkaHtmlJar"))
                             }
                         }
-                        // This task will add *.asc files to the publication for all artifacts.
-                        signing.sign(publications)
                     }
                 }
 

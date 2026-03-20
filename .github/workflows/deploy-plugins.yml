@@ -1,5 +1,8 @@
 name: Deploy plugins to Reposilite
 on:
+  push:
+    tags:
+      - '*'
   workflow_dispatch:
 jobs:
   deploy:
